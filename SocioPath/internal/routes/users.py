@@ -1,52 +1,33 @@
 from fastapi import APIRouter
-from pydantic import ( 
-    BaseModel,
-    StrictInt,
-    ValidationError,
-    validator,
-)
+from schemas.schemas import UsersSchema
+from models.models import UsersModel
+from db.BaseEngine import base, engine, sessionLocal
+
 router = APIRouter(
     prefix='/api'
 )
-
-class Users(BaseModel):    
-    id: int | None = None
-    username: str
-    post_num: int | None = None
-    
-    # Проверка username на содержание букв
-    @validator('username')
-    def username_alphanumerc(cls, username: str):
-        assert username.isalnum(), 'must be alphanumeric'
-        return username
-    
-
-@router.get("/hello")
-async def user_hello():
-    return {
-        'hello':'world'
-    }
-    
-# Разработать здесь логику API и исправить
     
 @router.get("/")
 async def root():
     return {"message":"Hello, World!"}
 
-@router.post('/users/{id}')
-async def create_user_account(user: Users):
-    user = {"user_id": user.id, "username": user.username, "post_num": user.post_num}
-    # return JSONResponse(user)
-    return "create user account: {user}"
+# исправить здесь ошибку
+@router.post('/users/{id}', response_model=UsersSchema)
+async def create_user_account(user: UsersSchema):
+    db_user = UsersModel(id=user.id,username=user.username, post_num=user.post_num)
+    sessionLocal().add(db_user)
+    sessionLocal().commit()
+    sessionLocal().refresh(db_user)
+    return db_user
 
 @router.get("/users/{id}")
-async def user_account_info(user: Users):
+async def user_account_info(user: UsersSchema):
     # return JSONResponse({'hello': 'world'})
     return "get user account info"
 @router.put("/users/{id}")
-async def user_update_info(user: Users):
+async def user_update_info(user: UsersSchema):
     return "update user list with user_id {user.id}"
 @router.delete("/users/{id}")
-async def user_delete_account(user: Users):
+async def user_delete_account(user: UsersSchema):
     return "delete user account"
 

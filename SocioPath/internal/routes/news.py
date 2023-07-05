@@ -1,33 +1,22 @@
 from fastapi import APIRouter
-from typing import Optional
-from pydantic import (
-    BaseModel,
-    StrictInt, 
-    ValidationError, 
-    validator
-)
-from datetime import datetime
+from schemas.schemas import NewsSchema
+from models.models import NewsModel
+from db.BaseEngine import base, engine, sessionLocal
 
 router = APIRouter(
     prefix="/api"
 )
-
-class News(BaseModel):
-    id: str
-    description: Optional[str] | None = None
-    _views: int
-    _post_date: Optional[datetime] = None
-        
+       
 @router.post("/news/{id}")
-async def create_post():
-    return 0
+async def create_post(news: NewsSchema):
+    return "We created a post {id}"
 @router.get("/news/{id}")
-async def get_post_info():
-    return 0
+async def get_post_info(news: NewsSchema):
+    return "We get a post {id}"
 @router.put("/news/{id}")
-async def update_post():
-    return 0
+async def update_post(news: NewsSchema):
+    return "We updated a post {id}"
 @router.delete("/news/{id}")
-async def delete_post():
-    return 0
+async def delete_post(news: NewsSchema):
+    return "We deleted a post {id}"
     

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from SocioPath.configuration.routes import __routes__
 
 class Server:
-    __app: FastAPI
+    __app: FastAPI(title="SocioAPP")
     
     def __init__(self, app: FastAPI) -> None:
         self.__app = app
